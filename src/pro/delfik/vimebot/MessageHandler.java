@@ -10,7 +10,7 @@ public class MessageHandler {
 		if (text.startsWith("Авторизация ")) {
 			String name = text.replace("Авторизация ", "");
 			try {
-				if (!VimeApi.isOnline(name)) return new String[] {name + " сейчас оффлайн."};
+				if (VimeApi.isOffline(name)) return new String[] {name + " сейчас оффлайн."};
 			} catch (Exception e) {
 				e.printStackTrace();
 				return new String[] {"Не существует игрока с ником " + name + "."};
@@ -29,7 +29,7 @@ public class MessageHandler {
 		if (text.equalsIgnoreCase("гильдия")) {
 			String player = Start.userVks.get(from_id + "");
 			if (player == null) return new String[] {"Вы ещё не авторизовались.", "Для авторизации введите команду\nАвторизация [Ник на VimeWorld]"};
-			if (!VimeApi.isOnline(player)) return new String[] {player + " должен находиться на сервере."};
+			if (VimeApi.isOffline(player)) return new String[] {player + " должен находиться на сервере."};
 			Start.addInGuild(player);
 			return new String[] {"Запрос на вступление в гильдию отправлен игроку " + player};
 		}
