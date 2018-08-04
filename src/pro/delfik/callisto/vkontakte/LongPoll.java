@@ -1,10 +1,10 @@
-package pro.delfik.vimebot;
+package pro.delfik.callisto.vkontakte;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class LongPoll {
 	protected static String key;
@@ -13,6 +13,7 @@ public class LongPoll {
 	public static volatile long lastPeer;
 
 	public static void requestLongPollServer() {
+		System.out.println("[VKBot] Connecting to VK...");
 		String data = VK.query("groups.getLongPollServer", "group_id=169237696");
 		try {
 			JSONObject obj = new JSONObject(data);
@@ -20,9 +21,9 @@ public class LongPoll {
 			key = response.getString("key");
 			server = response.getString("server");
 			ts = response.getInt("ts");
-			System.out.println("VKBot is working. BCE OK!");
+			System.out.println("[VKBot] Successfully connected to " + server);
 		} catch (Exception ex) {
-			System.out.println("VKBot IS NOT WORKING!!! vse ploho!!!!");
+			System.out.println("[VKBot] Failed connect to VK.");
 			ex.printStackTrace();
 		}
 	}
@@ -55,15 +56,13 @@ public class LongPoll {
 				JSONObject response = new JSONObject(data);
 				int _ts = response.getInt("ts");
 				JSONArray updates = response.getJSONArray("updates");
-				if(updates.length() != 0) try {
+				if(updates.length() != 0) {
 					processEvent(updates, _ts);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
 				}
 				ts = _ts;
 				failed = 0;
 			} catch (JSONException ex) {
-				if (failed > 100) throw new RuntimeException("Не удалось подключиться к LongPoll.");
+				if (failed > 100) throw new RuntimeException("[ERROR] Couldn't connect to VK.");
 				else {
 					requestLongPollServer();
 					failed++;
@@ -73,7 +72,7 @@ public class LongPoll {
 	}
 
 
-	private static void processEvent(JSONArray array, long ts) throws UnsupportedEncodingException {
+	private static void processEvent(JSONArray array, long ts) {
 		for (int i = 0; i <  array.length(); ++i) {
 			try {
 				JSONObject arrayItem = array.getJSONObject(i);
@@ -109,10 +108,10 @@ public class LongPoll {
 		}
 	}
 
-	public static String msg(String message, long peer) {
+	public static void msg(String message, long peer) {
 		System.out.println("[Для " + peer + "] " + message);
-		return VK.query("messages.send", "message=" + message.replace(' ', '+') + "&" +
-												 (peer > 2000000000 ? "chat_id=" + (peer - 2000000000) : "user_id=" + peer));
+		VK.query("messages.send", "message=" + URLEncoder.encode(message) + "&" +
+				(peer > 2000000000 ? "chat_id=" + (peer - 2000000000) : "user_id=" + peer));
 	}
 
 }

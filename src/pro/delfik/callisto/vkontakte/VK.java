@@ -1,17 +1,11 @@
-package pro.delfik.vimebot;
+package pro.delfik.callisto.vkontakte;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import pro.delfik.callisto.Callisto;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -21,15 +15,20 @@ import java.util.List;
 
 public class VK {
 
+	private static final String token = "5cd7565d245774d08cd43bd8522ed2167a25a1d8338a3d309c5ee91ca7adef94c7a3b1668a2f6b8d87d16";
+	
+	public static void start() {
+		new Thread(LongPoll::run, "VKBot").start();
+	}
+	
 	public static String query(String method) {
-		return get("https://api.vk.com/method/" + method, "v=3&access_token=" + VKBot.token);
+		return get("https://api.vk.com/method/" + method, "v=5.80&access_token=" + token);
 	}
 
 	public static String query(String method, String params) {
-		return get("https://api.vk.com/method/" + method, "v=3&access_token=" + VKBot.token + "&" + params);
+		return get("https://api.vk.com/method/" + method, "v=5.80&access_token=" + token + "&" + params);
 	}
-
-
+	
 	public static void markAsRead(int from_id) {
 		VK.query("messages.markAsRead", "peer_id=" + from_id);
 	}
@@ -125,9 +124,9 @@ public class VK {
 		}
 
 		public void addFormField(String var1, String var2) {
-			this.writer.append("--" + this.boundary).append("\r\n");
-			this.writer.append("Content-Disposition: form-data; name=\"" + var1 + "\"").append("\r\n");
-			this.writer.append("Content-Type: text/plain; charset=" + this.charset).append("\r\n");
+			this.writer.append("--").append(this.boundary).append("\r\n");
+			this.writer.append("Content-Disposition: form-data; name=\"").append(var1).append("\"").append("\r\n");
+			this.writer.append("Content-Type: text/plain; charset=").append(this.charset).append("\r\n");
 			this.writer.append("\r\n");
 			this.writer.append(var2).append("\r\n");
 			this.writer.flush();
@@ -135,9 +134,9 @@ public class VK {
 
 		public void addFilePart(String var1, File var2) throws IOException {
 			String var3 = var2.getName();
-			this.writer.append("--" + this.boundary).append("\r\n");
-			this.writer.append("Content-Disposition: form-data; name=\"" + var1 + "\"; filename=\"" + var3 + "\"").append("\r\n");
-			this.writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(var3)).append("\r\n");
+			this.writer.append("--").append(this.boundary).append("\r\n");
+			this.writer.append("Content-Disposition: form-data; name=\"").append(var1).append("\"; filename=\"").append(var3).append("\"").append("\r\n");
+			this.writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(var3)).append("\r\n");
 			this.writer.append("Content-Transfer-Encoding: binary").append("\r\n");
 			this.writer.append("\r\n");
 			this.writer.flush();
@@ -157,21 +156,21 @@ public class VK {
 		}
 
 		public void addHeaderField(String var1, String var2) {
-			this.writer.append(var1 + ": " + var2).append("\r\n");
+			this.writer.append(var1).append(": ").append(var2).append("\r\n");
 			this.writer.flush();
 		}
 
 		public List<String> finish() throws IOException {
-			ArrayList var1 = new ArrayList();
+			ArrayList<String> var1 = new ArrayList<>();
 			this.writer.append("\r\n").flush();
-			this.writer.append("--" + this.boundary + "--").append("\r\n");
+			this.writer.append("--").append(this.boundary).append("--").append("\r\n");
 			this.writer.close();
 			int var2 = this.httpConn.getResponseCode();
 			if(var2 != 200){
 				throw new IOException("Server returned non-OK status: " + var2);
 			}else{
 				BufferedReader var3 = new BufferedReader(new InputStreamReader(this.httpConn.getInputStream()));
-				String var4 = null;
+				String var4;
 
 				while ((var4 = var3.readLine()) != null){
 					var1.add(var4);
@@ -185,23 +184,23 @@ public class VK {
 	}
 
 	public static String post_upload(String var0, File var1) {
-		String var2 = "";
+		String response = "";
 
 		try{
-			MultipartUtility var3 = new MultipartUtility(var0, "utf-8");
-			var3.addFilePart("file", var1);
-			List var4 = var3.finish();
+			MultipartUtility multipartUtility = new MultipartUtility(var0, "utf-8");
+			multipartUtility.addFilePart("file", var1);
+			List var4 = multipartUtility.finish();
 
 			String var6;
-			for (Iterator var5 = var4.iterator(); var5.hasNext(); var2 = var2 + var6){
+			for (Iterator var5 = var4.iterator(); var5.hasNext(); response += var6){
 				var6 = (String) var5.next();
 			}
 		}catch (IOException var7){
-			var2 = "upload error";
+			response = "upload error";
 			var7.printStackTrace();
 		}
 
-		return var2;
+		return response;
 	}
 
 	public static String get(String server, String args) {
@@ -210,8 +209,8 @@ public class VK {
 
 	public static String get(String server){
 		try{
-			String server8 = new String(server.getBytes("UTF-8"), "windows-1251");
-			URL url = new URL(server8);
+			if (Callisto.os == Callisto.OS.WIN) server = new String(server.getBytes("UTF-8"), "windows-1251");
+			URL url = new URL(server);
 			URLConnection connection = url.openConnection();
 			connection.connect();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));

@@ -1,4 +1,4 @@
-package pro.delfik.vimebot;
+package pro.delfik.callisto;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

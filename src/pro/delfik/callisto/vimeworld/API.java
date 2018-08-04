@@ -1,7 +1,9 @@
-package pro.delfik.vimebot.vimeworld;
+package pro.delfik.callisto.vimeworld;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import pro.delfik.vimebot.VK;
+import pro.delfik.callisto.vkontakte.VK;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,10 +22,12 @@ public final class API {
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String result = reader.readLine();
             reader.close();
+			if (result.equals("[]") || result.startsWith("{\"error\":")) throw new IllegalArgumentException();
             return result;
+        } catch (IllegalArgumentException ex) {
+          throw ex;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return "{}";
+            throw new RuntimeException(ex);
         }
     }
 
@@ -40,9 +44,9 @@ public final class API {
     public static Player getPlayer(String player) {
         try {
             String rawJson = VK.get("http://api.vime.world/user/name/" + player);
-            JSONArray array = new JSONArray(rawJson);
-            return array.getJSONObject(0);
-        } catch (Exception e) {
+			JSONArray array = new JSONArray(rawJson);
+            return new Player(array.getJSONObject(0));
+        } catch (JSONException e) {
             return null;
         }
     }
