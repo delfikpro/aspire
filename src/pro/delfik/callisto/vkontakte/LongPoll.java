@@ -3,6 +3,8 @@ package pro.delfik.callisto.vkontakte;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import pro.delfik.callisto.Callisto;
+import pro.delfik.callisto.Utils;
 
 import java.net.URLEncoder;
 
@@ -13,17 +15,18 @@ public class LongPoll {
 	public static volatile long lastPeer;
 
 	public static void requestLongPollServer() {
-		System.out.println("[VKBot] Connecting to VK...");
-		String data = VK.query("groups.getLongPollServer", "group_id=169237696");
+		Callisto.warn("[VKBot] Устанавливаем соединение с ВКонтакте...");
+		String data = VK.query("groups.getLongPollServer", "group_id=" + Callisto.getVKGroupID());
 		try {
 			JSONObject obj = new JSONObject(data);
 			JSONObject response = obj.getJSONObject("response");
 			key = response.getString("key");
 			server = response.getString("server");
 			ts = response.getInt("ts");
-			System.out.println("[VKBot] Successfully connected to " + server);
+			Callisto.fine("[VKBot] Успешное подключение к серверу " + server);
 		} catch (Exception ex) {
-			System.out.println("[VKBot] Failed connect to VK.");
+			Callisto.error("[Ошибка] Не удалось подключится к ВКонтакте. Отправьте скриншот экрана с ошибкой ниже:");
+			Callisto.error(data);
 			ex.printStackTrace();
 		}
 	}
@@ -110,6 +113,7 @@ public class LongPoll {
 
 	public static void msg(String message, long peer) {
 		System.out.println("[Для " + peer + "] " + message);
+		if (Callisto.os == Callisto.OS.WIN) message = Utils.to1251(message);
 		VK.query("messages.send", "message=" + URLEncoder.encode(message) + "&" +
 				(peer > 2000000000 ? "chat_id=" + (peer - 2000000000) : "user_id=" + peer));
 	}

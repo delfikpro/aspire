@@ -16,7 +16,11 @@ public class Player {
             this.name = user.getString("username");
             this.level = user.getInt("level");
             this.rank = Rank.valueOf(user.getString("rank"));
-            this.guildID = user.getJSONObject("guild").getInt("id");
+            int id = 0;
+            try {
+                id = user.getJSONObject("guild").getInt("id");
+            } catch (JSONException ignored) {}
+            guildID = id;
         } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
@@ -75,5 +79,10 @@ public class Player {
 
     public Rank getRank() {
         return rank;
+    }
+    
+    @Override
+    public String toString() {
+        return rank.prefix + (rank == Rank.PLAYER ? "" : " ") + name + " [id" + id + ", level " + level + ", guild " + guildID + "]";
     }
 }

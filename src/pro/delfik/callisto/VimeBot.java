@@ -7,6 +7,8 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import static pro.delfik.callisto.Callisto.TEST;
+
 public class VimeBot extends Thread {
 	
 	public static VimeBot instance;
@@ -16,11 +18,13 @@ public class VimeBot extends Thread {
 	
 	public VimeBot() {
 		super("VimeBot");
-		try {
+		if (Callisto.TEST)
+			Callisto.fine("[VimeBot] Бот успешно запущен в тестовом режиме. Он не будет печатать, будет лишь выводить команды в консоль.");
+		else try {
 			handle = new Robot();
-			System.out.println("[VimeBot] Successfully injected into VimeWorld.");
+			Callisto.fine("[VimeBot] Успешная инициализация.");
 		} catch (AWTException e) {
-			System.out.println("[ERROR] Unable to inject into VimeWorld.");
+			Callisto.error("[Ошибка] Невозможно создать инстанцию робота. Обратитесь к разработчику.");
 			e.printStackTrace();
 		}
 		instance = this;
@@ -35,18 +39,20 @@ public class VimeBot extends Thread {
 	}
 	
 	public void queueCmd(String command) {
-		queue.add(command);
+		if (TEST) System.out.println("[VimeBotOutput] " + command);
+		else queue.add(command);
 	}
 	
 	@Override
 	public void run() {
 		while (true) {
 			try {
+				sleep(500);
 				String command = queue.remove();
 				writeText(command + '\n');
-				sleep(150);
+				sleep(1000);
 				writeText("t");
-				sleep(5000);
+				sleep(3500);
 			}
 			catch (NoSuchElementException ignored) {}
 			catch (InterruptedException ex) {break;}
@@ -79,6 +85,10 @@ public class VimeBot extends Thread {
 				case '%':
 					shift = true;
 					key = KeyEvent.VK_5;
+					break;
+				case '+':
+					shift = true;
+					key = KeyEvent.VK_EQUALS;
 					break;
 				case '\n':
 					key = KeyEvent.VK_ENTER;

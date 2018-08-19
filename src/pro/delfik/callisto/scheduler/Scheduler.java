@@ -1,6 +1,8 @@
 package pro.delfik.callisto.scheduler;
 
+import pro.delfik.callisto.Callisto;
 import pro.delfik.callisto.MotdManager;
+import pro.delfik.callisto.vimeworld.ExperienceChecker;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ public class Scheduler extends Thread {
 	public static Scheduler instance;
 	
 	public Scheduler() {
-		super("Scheduler");
+		super("Планировщик");
 		instance = this;
 	}
 	
@@ -23,7 +25,7 @@ public class Scheduler extends Thread {
 	
 	@Override
 	public void run() {
-		System.out.println("[Scheduler] Initialized.");
+		Callisto.fine("[Планировщик] Успешная инициализация.");
 		while (true) {
 			tick();
 			try {
@@ -50,11 +52,19 @@ public class Scheduler extends Thread {
 		if (checkedThisHour) return;
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
-		if (hour == 1) {
-			checkedThisHour = true;
-			System.out.println("[Sheduler] New day started! Resetting daily xp and coins!");
-			MotdManager.newDay(false);
-			schedule(new Task(() -> checkedThisHour = false, 60));
+		if (hour != 1) return;
+		checkedThisHour = true;
+		newDay(Callisto.getDayInYear());
+	}
+	
+	public void newDay(int day) {
+		Callisto.warn("Начался новый день! Сбрасываем счётчик опыта и коинов за день...");
+		MotdManager.newDay(false);
+		schedule(new Task(() -> checkedThisHour = false, 61));
+		if (day < 360 && day > 4 && day % 3 == 0) {
+			Callisto.warn("Сегодня день фильтрации игроков. Начинаем очистку!");
+			ExperienceChecker.check();
+			ExperienceChecker.save();
 		}
 	}
 	

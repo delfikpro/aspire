@@ -6,6 +6,7 @@ import pro.delfik.callisto.Utils;
 import pro.delfik.callisto.VimeBot;
 import pro.delfik.callisto.scheduler.TimedHashMap;
 import pro.delfik.callisto.vimeworld.API;
+import pro.delfik.callisto.vimeworld.Guild.Member;
 import pro.delfik.callisto.vimeworld.Player;
 
 import java.util.Map;
@@ -25,11 +26,14 @@ public class MessageHandler {
 	
 	public static String[] handle(String message, int from_id, long peer_id) {
 		String text;
-		if (Callisto.os == Callisto.OS.WIN) {
-			text = Callisto.os == Callisto.OS.WIN ? Utils.to8(message) : message;
-			System.out.println(message + " -> " + text);
-		} else text = message;
-		if (text.startsWith("Авторизация ")) {
+		text = Callisto.os == Callisto.OS.WIN ? Utils.to8(message) : message;
+		
+		if (text.equalsIgnoreCase("Команды")) return new String[] {
+			"\"Авторизация [Ник]\" - привязать аккаунт вайма к странице ВК.",
+			"\"Гильдия\" - присоединиться к гильдии.",
+			"\"Команды\" - вывести это сообщение.",
+		};
+		if (text.toLowerCase().startsWith("авторизация ")) {
 			String name = text.replace("Авторизация ", "");
 			try {
 				if (!API.getPlayer(name).getSession().isOnline()) return new String[] {name + " сейчас оффлайн."};
@@ -50,20 +54,33 @@ public class MessageHandler {
 		}
 		if (text.equalsIgnoreCase("гильдия")) {
 			String player = userVks.get(from_id + "");
-			if (player == null) return new String[] {"Вы ещё не авторизовались в нашей системе. Для авторизации введите команду:", "Авторизация %5BНик на VimeWorld%5D"};
+			if (player == null) return new String[] {"Вы ещё не авторизовались в нашей системе. Для авторизации введите команду:", "Авторизация [Ник на VimeWorld]"};
 			Player p = API.getPlayer(player);
 			if (!p.getSession().isOnline()) return new String[] {player + " должен находиться на сервере."};
+			if (p.getLevel() < 25) return new String[] {"Ошибка: " + player + " не достиг 25-ого уровня. Это является обязательным требованием для вступления в гильдию."};
 			if (p.getGuildID() != 0) return new String[] {player + " уже состоит в гильдии. Напишите '/g leave' в игре, чтобы покинуть гильдию."};
 			VimeBot.queue("/g i " + player);
 			return new String[] {"Запрос на вступление в гильдию отправлен игроку " + player};
 		}
 		if (text.equalsIgnoreCase("список")) {
-			String[] array = new String[userVks.size()];
-			int line = 0;
+			String[] result = new String[userVks.size() / 10 + 1];
+			StringBuilder builder = new StringBuilder();
+			int line = 0, page = 0;
 			for (Map.Entry<String, String> entry : userVks.entrySet()) {
-				array[line] = ++line + ". *id" + entry.getKey() + " (" + entry.getValue() + ")";
+				String id = entry.getKey(), name = entry.getValue();
+				Map<String, Member> members = API.getGuild(Callisto.getGuildName()).constructMemberMap();
+				builder.append("*id").append(id).append(" (").append(name).append(") - ");
+				Member member = members.get(name.toLowerCase());
+				if (member == null) builder.append("не состоит в Attaques.\n");
+				else builder.append(member.getStatus()).append(" [").append(member.getGuildExp()).append(" XP].\n");
+				if (++line == 10) {
+					line = 0;
+					result[page++] = builder.toString();
+					builder = new StringBuilder();
+				}
 			}
-			return array;
+			result[page] = builder.toString();
+			return result;
 		}
 		if (text.length() == 4) {
 			try {
