@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="VimeBot">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="VimeBot.jar">
+      <element id="module-output" name="VimeBot" />
+    </root>
+  </artifact>
+</component>
