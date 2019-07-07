@@ -5,7 +5,7 @@ import pro.delfik.vimebot.Command;
 import pro.delfik.vimebot.CommandPattern;
 import pro.delfik.vimebot.Config;
 import pro.delfik.vimebot.Console;
-import pro.delfik.vimebot.Reconnector;
+import pro.delfik.vimebot.PriorityVirtualPlayer;
 import pro.delfik.vimebot.Util;
 import pro.delfik.vimebot.VimeBot;
 import pro.delfik.vimebot.VirtualPlayer;
@@ -38,7 +38,7 @@ public class Sholimp {
     public Sholimp(File workingDir, String encoding) {
         Console console = new Console(encoding);
         Config config = new Config(new File(workingDir, "config.yml"));
-        VirtualPlayer virtualPlayer = new VirtualPlayer(new File(workingDir, "output-client.log"), this::handleLogLine);
+        VirtualPlayer virtualPlayer = new PriorityVirtualPlayer(new File(workingDir, "output-client.log"), this::handleLogLine);
         AutoTasker autoTasker = new AutoTasker(this::advertise, 180_000, () -> advertising);
         this.vimeBot = VimeBot.builder().console(console).config(config).virtualPlayer(virtualPlayer).autoTasker(autoTasker).build();
         
@@ -72,8 +72,6 @@ public class Sholimp {
             advertising = !advertising;
         if (line.startsWith("Request to teleport"))
             vimeBot.getVirtualPlayer().unlock();
-        if (line.startsWith("/region <"))
-            new Reconnector().reconnect(vimeBot.getVirtualPlayer().getRobot());
         if (line.startsWith("You have uninvited "))
             handleUnInvite(line);
         boolean b = false;

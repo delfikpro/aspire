@@ -2,6 +2,11 @@ package pro.delfik.vimebot;
 
 import lombok.experimental.UtilityClass;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,5 +48,20 @@ public class Util {
             Console.log("&fФайлик с приглашёнными юзерами не найден. Вы запускаете меня впервые?\n&r");
         }
         return collection;
+    }
+    
+    private static final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    
+    public static void copyToClipboard(String string) {
+        StringSelection transferable = new StringSelection(string);
+        clipboard.setContents(transferable, transferable);
+    }
+    
+    public static Robot createRobot() {
+        try {
+            return new Robot();
+        } catch (AWTException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
