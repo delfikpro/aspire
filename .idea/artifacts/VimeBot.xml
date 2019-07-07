@@ -1,10 +1,10 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="VimeBot">
-    <output-path>$PROJECT_DIR$</output-path>
-    <root id="archive" name="VimeBot.jar">
+  <artifact type="jar" name="vimebot">
+    <output-path>$PROJECT_DIR$/../../../</output-path>
+    <root id="archive" name="vimebot.jar">
       <element id="module-output" name="VimeBot" />
-      <element id="dir-copy" path="$PROJECT_DIR$/src/META-INF" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../libs/JSON.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jna-platform-5.3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jna-5.3.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
