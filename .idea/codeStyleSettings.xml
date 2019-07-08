@@ -13,10 +13,6 @@
           <value>
             <package name="" withSubpackages="true" static="false" />
             <emptyLine />
-            <package name="com.civcraft" withSubpackages="true" static="false" />
-            <emptyLine />
-            <package name="org.bukkit" withSubpackages="true" static="false" />
-            <emptyLine />
             <package name="javax" withSubpackages="true" static="false" />
             <package name="java" withSubpackages="true" static="false" />
             <emptyLine />
