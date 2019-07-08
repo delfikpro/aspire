@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/VimeBot.iml" filepath="$PROJECT_DIR$/VimeBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VimeBot/VimeBot.iml" filepath="$PROJECT_DIR$/VimeBot/VimeBot.iml" />
     </modules>
   </component>
 </project>
