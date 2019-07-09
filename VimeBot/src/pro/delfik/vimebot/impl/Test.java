@@ -2,7 +2,7 @@ package pro.delfik.vimebot.impl;
 
 import pro.delfik.vimebot.CommandPattern;
 import pro.delfik.vimebot.Console;
-import pro.delfik.vimebot.PriorityVirtualPlayer;
+import pro.delfik.vimebot.MinecraftVirtualPlayer;
 import pro.delfik.vimebot.VimeBot;
 import pro.delfik.vimebot.VirtualPlayer;
 
@@ -15,7 +15,7 @@ public class Test {
     
     public Test() {
         Console console = new Console("321");
-        VirtualPlayer virtualPlayer = new PriorityVirtualPlayer(null, null);
+        VirtualPlayer virtualPlayer = new MinecraftVirtualPlayer();
         this.vimeBot = VimeBot.builder().console(console).virtualPlayer(virtualPlayer).build();
         vimeBot.start();
         Scanner sc = new Scanner(System.in);

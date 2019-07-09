@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Ето добрый робот
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
  * Он очень стараицо
  * Ещё он умеет читать чат и сообщать вам всю информацию оттуда
  */
-public abstract class VirtualPlayer extends Thread {
+public abstract class VirtualPlayer extends AutomaticUnit {
     
     /**
      * Перехватчик логов, нужен для чтения чата
@@ -40,6 +41,7 @@ public abstract class VirtualPlayer extends Thread {
      * Инициализация бота с игнорированием логов.
      */
     public VirtualPlayer() {
+        super("Virtual Player");
         logInterceptor = null;
     }
     
@@ -49,11 +51,12 @@ public abstract class VirtualPlayer extends Thread {
      * @param logFile        Файл, в который пишутся логи
      * @param loggerCallback Слушатель сообщений (Может быть null)
      */
-    public VirtualPlayer(File logFile, Consumer<String> loggerCallback) {
+    public VirtualPlayer(File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
+        super("Virtual Player");
         if (logFile == null)
             logInterceptor = null;
         else
-            logInterceptor = new LogInterceptor(logFile, s -> handleLog(s, loggerCallback));
+            logInterceptor = new LogInterceptor(logFile, logFilter, s -> handleLog(s, loggerCallback));
     }
     
     /**
@@ -91,7 +94,7 @@ public abstract class VirtualPlayer extends Thread {
      */
     @Override
     public void run() {
-        while (Util.sleep(850)) {
+        while (BotUtil.sleep(850)) {
             if (lock && logInterceptor != null) continue;
             Command cmd = commands.poll();
             if (cmd == null) continue;

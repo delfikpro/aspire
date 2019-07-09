@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 @UtilityClass
-public class Util {
+public class BotUtil {
     
     public static boolean sleep(long ms) {
         try {

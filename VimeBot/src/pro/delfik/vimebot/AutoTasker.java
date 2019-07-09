@@ -21,11 +21,11 @@ public class AutoTasker extends Thread {
     
     @Override
     public final void run() {
-        while (Util.sleep(1000)) {
+        while (BotUtil.sleep(1000)) {
             if (!condition.getAsBoolean())
                 continue;
             super.run();
-            Util.sleep(delay);
+            BotUtil.sleep(delay);
         }
     }
     

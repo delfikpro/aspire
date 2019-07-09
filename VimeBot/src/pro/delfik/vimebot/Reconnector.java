@@ -1,6 +1,7 @@
 package pro.delfik.vimebot;
 
 import com.sun.jna.platform.win32.WinDef;
+import pro.delfik.vimebot.stealth.WinAPI;
 
 import java.awt.Robot;
 import java.awt.event.InputEvent;
@@ -47,14 +48,14 @@ public class Reconnector {
             if (action.key == -1) {
                 bot.mouseMove(cx + action.x, cy + action.y);
                 bot.mousePress(InputEvent.BUTTON1_MASK);
-                Util.sleep(50);
+                BotUtil.sleep(50);
                 bot.mouseRelease(InputEvent.BUTTON1_MASK);
             } else {
                 bot.keyPress(action.key);
-                Util.sleep(50);
+                BotUtil.sleep(50);
                 bot.keyRelease(action.key);
             }
-            Util.sleep(action.delay);
+            BotUtil.sleep(action.delay);
         }
         
     }

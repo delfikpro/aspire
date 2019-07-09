@@ -1,14 +1,6 @@
 package pro.delfik.vimebot.impl;
 
-import pro.delfik.vimebot.AutoTasker;
-import pro.delfik.vimebot.Command;
-import pro.delfik.vimebot.CommandPattern;
-import pro.delfik.vimebot.Config;
-import pro.delfik.vimebot.Console;
-import pro.delfik.vimebot.PriorityVirtualPlayer;
-import pro.delfik.vimebot.Util;
-import pro.delfik.vimebot.VimeBot;
-import pro.delfik.vimebot.VirtualPlayer;
+import pro.delfik.vimebot.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,16 +30,16 @@ public class Sholimp {
     public Sholimp(File workingDir, String encoding) {
         Console console = new Console(encoding);
         Config config = new Config(new File(workingDir, "config.yml"));
-        VirtualPlayer virtualPlayer = new PriorityVirtualPlayer(new File(workingDir, "output-client.log"), this::handleLogLine);
+        VirtualPlayer virtualPlayer = new MinecraftVirtualPlayer(new File(workingDir, "output-client.log"), LogInterceptor.MINECRAFT_FILTER, this::handleLogLine);
         AutoTasker autoTasker = new AutoTasker(this::advertise, 180_000, () -> advertising);
         this.vimeBot = VimeBot.builder().console(console).config(config).virtualPlayer(virtualPlayer).autoTasker(autoTasker).build();
         
-        Util.readFile(workingDir, "invited.txt", invited);
-        Util.readFile(workingDir, "blacklist.txt", blacklist);
-        ads = Util.readFile(workingDir, "ads.txt", new ArrayList<>()).toArray(new String[0]);
+        BotUtil.readFile(workingDir, "invited.txt", invited);
+        BotUtil.readFile(workingDir, "blacklist.txt", blacklist);
+        ads = BotUtil.readFile(workingDir, "ads.txt", new ArrayList<>()).toArray(new String[0]);
         
-        invitedWriter = Util.openWriter(workingDir, "invited.txt");
-        blacklistWriter = Util.openWriter(workingDir, "blacklist.txt");
+        invitedWriter = BotUtil.openWriter(workingDir, "invited.txt");
+        blacklistWriter = BotUtil.openWriter(workingDir, "blacklist.txt");
         
     }
     

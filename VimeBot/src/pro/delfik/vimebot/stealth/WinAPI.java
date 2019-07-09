@@ -1,4 +1,4 @@
-package pro.delfik.vimebot;
+package pro.delfik.vimebot.stealth;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WTypes;
@@ -13,7 +13,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 import java.util.Arrays;
 
-import static pro.delfik.vimebot.WinAPI.User32.U;
+import static pro.delfik.vimebot.stealth.WinAPI.User32.U;
 
 public class WinAPI {
     
