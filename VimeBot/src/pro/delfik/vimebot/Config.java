@@ -18,7 +18,7 @@ public class Config {
         this.file = file;
     }
     
-    public void read() {
+    public void read(Console console) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             int i;
@@ -31,11 +31,11 @@ public class Config {
             }
             reader.close();
         } catch (FileNotFoundException e) {
-            Console.log("Конфиг не найден. Создаём новый. Иди настраивай.");
+            console.print("Конфиг не найден. Создаём новый. Иди настраивай.\n");
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-                Console.log("А нет, создать не получилось, хз чо делать, пиши делфику");
+                console.print("А нет, создать не получилось, хз чо делать, отправляй баг-репорт\n");
                 ex.printStackTrace();
             }
             System.exit(0);

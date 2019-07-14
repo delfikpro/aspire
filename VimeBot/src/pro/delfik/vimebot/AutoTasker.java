@@ -2,18 +2,15 @@ package pro.delfik.vimebot;
 
 import java.util.function.BooleanSupplier;
 
-public class AutoTasker extends Thread {
+public class AutoTasker extends AutomaticUnit {
     
     private final long delay;
     private final BooleanSupplier condition;
+    private final Runnable runnable;
     
-    public AutoTasker(long delay, BooleanSupplier condition) {
-        this.delay = delay;
-        this.condition = condition;
-    }
-    
-    public AutoTasker(Runnable runnable, long delay, BooleanSupplier condition) {
-        super(runnable);
+    public AutoTasker(Bot bot, Runnable runnable, long delay, BooleanSupplier condition) {
+        super(bot, "Auto Tasker");
+        this.runnable = runnable;
         this.delay = delay;
         this.condition = condition;
     }
@@ -24,7 +21,7 @@ public class AutoTasker extends Thread {
         while (BotUtil.sleep(1000)) {
             if (!condition.getAsBoolean())
                 continue;
-            super.run();
+            runnable.run();
             BotUtil.sleep(delay);
         }
     }

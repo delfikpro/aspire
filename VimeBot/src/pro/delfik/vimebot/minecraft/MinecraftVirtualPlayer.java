@@ -1,4 +1,8 @@
-package pro.delfik.vimebot;
+package pro.delfik.vimebot.minecraft;
+
+import pro.delfik.vimebot.Bot;
+import pro.delfik.vimebot.BotUtil;
+import pro.delfik.vimebot.VirtualPlayer;
 
 import java.awt.Robot;
 import java.io.File;
@@ -13,22 +17,29 @@ import static java.awt.event.KeyEvent.*;
  */
 public class MinecraftVirtualPlayer extends VirtualPlayer {
     
-    private final Robot robot = BotUtil.createRobot();
+    private final MinecraftReconnector reconnector;
     
-    public MinecraftVirtualPlayer() {
+    public MinecraftVirtualPlayer(Bot bot) {
+        super(bot);
+        reconnector = new MinecraftReconnector(this.bot);
     }
     
-    public MinecraftVirtualPlayer(File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
-        super(logFile, logFilter, loggerCallback);
+    public MinecraftVirtualPlayer(Bot bot, File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
+        super(bot, logFile, logFilter, loggerCallback);
+        reconnector = new MinecraftReconnector(this.bot);
     }
     
     @Override
     protected void execute(String command) {
         
+        while (reconnector.tryEnterChat()) {
+            bot.log("§4Reconnecting...");
+            reconnector.reconnect();
+            BotUtil.sleep(5000);
+        }
+        
         BotUtil.copyToClipboard(command);
         
-        robot.keyPress(VK_T);
-        robot.keyRelease(VK_T);
         BotUtil.sleep(50);
         robot.keyPress(VK_CONTROL);
         BotUtil.sleep(50);

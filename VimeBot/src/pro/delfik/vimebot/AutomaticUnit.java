@@ -2,8 +2,12 @@ package pro.delfik.vimebot;
 
 public abstract class AutomaticUnit extends Thread {
     
-    public AutomaticUnit(String s) {
-        super(s);
+    protected final Bot bot;
+    
+    public AutomaticUnit(Bot bot, String name) {
+        super(name);
+        this.bot = bot;
+        bot.cover(this);
     }
     
     @Override

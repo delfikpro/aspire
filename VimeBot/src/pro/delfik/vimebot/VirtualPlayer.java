@@ -1,5 +1,6 @@
 package pro.delfik.vimebot;
 
+import java.awt.Robot;
 import java.io.File;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -38,25 +39,35 @@ public abstract class VirtualPlayer extends AutomaticUnit {
     private volatile boolean lock;
     
     /**
-     * Инициализация бота с игнорированием логов.
+     * Ссылка на робота для удобства использования
      */
-    public VirtualPlayer() {
-        super("Virtual Player");
-        logInterceptor = null;
+    protected final Robot robot;
+    
+    /**
+     * Инициализация бота с игнорированием логов.
+     * @param bot Ссылка на бота
+     */
+    public VirtualPlayer(Bot bot) {
+        super(bot, "Virtual Player");
+        this.logInterceptor = null;
+        this.robot = bot.getRobot();
     }
     
     /**
      * Инициализация бота с чтением логов
      *
+     * @param bot Ссылка на бота
      * @param logFile        Файл, в который пишутся логи
+     * @param logFilter      Фильтр для логов
      * @param loggerCallback Слушатель сообщений (Может быть null)
      */
-    public VirtualPlayer(File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
-        super("Virtual Player");
+    public VirtualPlayer(Bot bot, File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
+        super(bot, "Virtual Player");
+        this.robot = bot.getRobot();
         if (logFile == null)
             logInterceptor = null;
         else
-            logInterceptor = new LogInterceptor(logFile, logFilter, s -> handleLog(s, loggerCallback));
+            logInterceptor = new LogInterceptor(bot, logFile, logFilter, s -> handleLog(s, loggerCallback));
     }
     
     /**
@@ -85,8 +96,6 @@ public abstract class VirtualPlayer extends AutomaticUnit {
     @Override
     public synchronized void start() {
         super.start();
-        if (logInterceptor != null)
-            logInterceptor.start();
     }
     
     /**

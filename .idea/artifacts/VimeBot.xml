@@ -3,6 +3,8 @@
     <output-path>$PROJECT_DIR$/out</output-path>
     <root id="archive" name="VimeBot.jar">
       <element id="module-output" name="VimeBot" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jna-5.3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jna-platform-5.3.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

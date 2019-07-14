@@ -1,33 +1,38 @@
 package pro.delfik.vimebot.impl;
 
+import pro.delfik.vimebot.Bot;
+import pro.delfik.vimebot.BotUtil;
 import pro.delfik.vimebot.CommandPattern;
 import pro.delfik.vimebot.Console;
-import pro.delfik.vimebot.MinecraftVirtualPlayer;
-import pro.delfik.vimebot.VimeBot;
 import pro.delfik.vimebot.VirtualPlayer;
+import pro.delfik.vimebot.minecraft.MinecraftVirtualPlayer;
 
 import java.util.Scanner;
 
 public class Test {
     
     private static Test i;
-    private final VimeBot vimeBot;
     
     public Test() {
-        Console console = new Console("321");
-        VirtualPlayer virtualPlayer = new MinecraftVirtualPlayer();
-        this.vimeBot = VimeBot.builder().console(console).virtualPlayer(virtualPlayer).build();
-        vimeBot.start();
+        Console console = Console.Preset.WINDOWS_CMDCOLOR.create(System.out);
+        Bot bot = new Bot(console, "VimeWorld.ru", "Discover VimeWorld.ru");
+        VirtualPlayer virtualPlayer = new MinecraftVirtualPlayer(bot);
+        bot.start();
+        
         Scanner sc = new Scanner(System.in);
         sc.useDelimiter("\n");
-        for (; ; ) {
+        
+        while (true) {
+            
             String next = sc.next();
             if (next.equals("=="))
                 System.exit(0);
+            BotUtil.sleep(1000);
             virtualPlayer.unlock();
             virtualPlayer.queueCommand(CommandPattern.CHAT, null, next);
             virtualPlayer.unlock();
-            System.out.println("Queued '" + next + "'");
+            console.print("Queued '" + next + "'\n");
+            
         }
     }
     

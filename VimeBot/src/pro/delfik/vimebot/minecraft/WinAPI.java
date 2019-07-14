@@ -1,6 +1,5 @@
-package pro.delfik.vimebot.stealth;
+package pro.delfik.vimebot.minecraft;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -13,9 +12,12 @@ import com.sun.jna.win32.W32APIOptions;
 
 import java.util.Arrays;
 
-import static pro.delfik.vimebot.stealth.WinAPI.User32.U;
+import static com.sun.jna.Native.loadLibrary;
 
 public class WinAPI {
+    
+    @SuppressWarnings("deprecation")
+    private final User32 U = loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
     
     public HWND window;
     private final UINT keydownOperation = new UINT(WinUser.WM_KEYDOWN);
@@ -53,10 +55,22 @@ public class WinAPI {
         return U.SendMessage(window, pasteOperation, new WPARAM(0), new LPARAM(0));
     }
     
+    public HWND findWindow(String lpClassName, String windowName) {
+        return U.FindWindow(lpClassName, windowName);
+    }
+    
+    public int[] getWindowRect(HWND hwnd) {
+        int[] rect = new int[4];
+        int result = U.GetWindowRect(hwnd, rect);
+        if (result == 0) throw new RuntimeException("Window rect is unavailable");
+        return rect;
+    }
+    
+    public int[] getWindowRect() {
+        return getWindowRect(window);
+    }
+    
     public interface User32 extends StdCallLibrary {
-        
-        @SuppressWarnings("deprecation")
-        User32 U = Native.loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
         
         HWND FindWindow(String lpClassName, String lpWindowName);
         

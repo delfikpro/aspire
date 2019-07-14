@@ -1,11 +1,11 @@
-package pro.delfik.vimebot.stealth;
+package pro.delfik.vimebot.minecraft;
 
+import pro.delfik.vimebot.Bot;
 import pro.delfik.vimebot.BotUtil;
 import pro.delfik.vimebot.VirtualPlayer;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Robot;
 import java.io.File;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,16 +19,18 @@ import static java.awt.event.KeyEvent.*;
  */
 public class StealthMinecraftVirtualPlayer extends VirtualPlayer {
     
-    private final WinAPI winAPI = new WinAPI("VimeWorld.ru", "Discover VimeWorld.ru");
-    private final Robot robot = BotUtil.createRobot();
+    public StealthMinecraftVirtualPlayer(Bot bot) {
+        super(bot);
+    }
     
-    public StealthMinecraftVirtualPlayer(File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
-        super(logFile, logFilter, loggerCallback);
+    public StealthMinecraftVirtualPlayer(Bot bot, File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
+        super(bot, logFile, logFilter, loggerCallback);
     }
     
     @Override
     protected void execute(String line) {
         
+        WinAPI winAPI = bot.getWinAPI();
         Point location = MouseInfo.getPointerInfo().getLocation();
         
         int m = 2;

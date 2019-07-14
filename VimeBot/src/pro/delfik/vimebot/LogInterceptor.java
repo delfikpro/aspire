@@ -23,7 +23,7 @@ public class LogInterceptor extends AutomaticUnit implements AutoCloseable {
         String pattern = "[CLIENT] [INFO] [CHAT] ";
         int i = s.indexOf(pattern);
         if (i == -1) return null;
-        return pattern.substring(i + pattern.length());
+        return s.substring(i + pattern.length());
     };
     
     private final BufferedReader reader;
@@ -32,12 +32,13 @@ public class LogInterceptor extends AutomaticUnit implements AutoCloseable {
     
     /**
      * Создание перехватчика логов и его подготовка к запуску (но не сам запуск)
+     * @param bot Ссылка на бота
      * @param file Файл, в который записываются логи
      * @param filter Фильтр данных, записываемых в файл
      * @param callback Функция, вызываемая при получении новой строки.
      */
-    public LogInterceptor(File file, Function<String, String> filter, Consumer<String> callback) {
-        super("Log Interceptor");
+    public LogInterceptor(Bot bot, File file, Function<String, String> filter, Consumer<String> callback) {
+        super(bot, "Log Interceptor");
         try {
             this.callback = callback;
             this.filter = filter;
