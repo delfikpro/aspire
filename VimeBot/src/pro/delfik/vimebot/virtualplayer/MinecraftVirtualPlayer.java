@@ -1,10 +1,8 @@
-package pro.delfik.vimebot.minecraft;
+package pro.delfik.vimebot.virtualplayer;
 
 import pro.delfik.vimebot.Bot;
 import pro.delfik.vimebot.BotUtil;
-import pro.delfik.vimebot.VirtualPlayer;
 
-import java.awt.Robot;
 import java.io.File;
 import java.util.function.Consumer;
 import java.util.function.Function;

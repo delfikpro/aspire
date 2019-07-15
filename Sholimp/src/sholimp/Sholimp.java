@@ -1,7 +1,11 @@
-package pro.delfik.vimebot.impl;
+package sholimp;
 
 import pro.delfik.vimebot.*;
-import pro.delfik.vimebot.minecraft.MinecraftVirtualPlayer;
+import pro.delfik.vimebot.command.Command;
+import pro.delfik.vimebot.command.CommandPattern;
+import pro.delfik.vimebot.command.LogInterceptor;
+import pro.delfik.vimebot.virtualplayer.MinecraftVirtualPlayer;
+import pro.delfik.vimebot.virtualplayer.VirtualPlayer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+/**
+ * Имплементация API VimeBot для управления варпами на модовых серверах вайма.
+ * При вводе команды /list в игре добавляет на выбранные заранее варпы всех, кого ещё не добавляла.
+ * // ToDo: При вводе команды /t включает режим пиара - каждые 3 минуты отправляет сообщение с рекламой,
+ * а также приглашает неприглашённых игроков.
+ * При ручном удалении любого игрока с варпа добавляет его в чёрный список, и он больше не будет приглашён.
+ */
 public class Sholimp {
     
     private CommandPattern WARP = new CommandPattern("/warp invite %s %s", Pattern.compile("(You have invited .*|[^:]* is already invited.*|[^:]* is the creator.*)"));

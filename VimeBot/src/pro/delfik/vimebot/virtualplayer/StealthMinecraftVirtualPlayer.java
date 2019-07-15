@@ -1,8 +1,8 @@
-package pro.delfik.vimebot.minecraft;
+package pro.delfik.vimebot.virtualplayer;
 
 import pro.delfik.vimebot.Bot;
 import pro.delfik.vimebot.BotUtil;
-import pro.delfik.vimebot.VirtualPlayer;
+import pro.delfik.vimebot.WinAPI;
 
 import java.awt.MouseInfo;
 import java.awt.Point;

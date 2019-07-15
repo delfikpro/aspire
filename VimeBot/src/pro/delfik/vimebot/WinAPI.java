@@ -1,4 +1,4 @@
-package pro.delfik.vimebot.minecraft;
+package pro.delfik.vimebot;
 
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;

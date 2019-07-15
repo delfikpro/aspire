@@ -1,4 +1,4 @@
-package pro.delfik.vimebot.minecraft;
+package pro.delfik.vimebot.virtualplayer;
 
 import pro.delfik.vimebot.AutomaticUnit;
 import pro.delfik.vimebot.Bot;

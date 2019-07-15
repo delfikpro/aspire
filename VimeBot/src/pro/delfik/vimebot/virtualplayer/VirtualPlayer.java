@@ -1,4 +1,11 @@
-package pro.delfik.vimebot;
+package pro.delfik.vimebot.virtualplayer;
+
+import pro.delfik.vimebot.AutomaticUnit;
+import pro.delfik.vimebot.Bot;
+import pro.delfik.vimebot.BotUtil;
+import pro.delfik.vimebot.command.Command;
+import pro.delfik.vimebot.command.CommandPattern;
+import pro.delfik.vimebot.command.LogInterceptor;
 
 import java.awt.Robot;
 import java.io.File;

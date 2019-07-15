@@ -1,7 +1,6 @@
 package pro.delfik.vimebot;
 
 import lombok.Getter;
-import pro.delfik.vimebot.minecraft.WinAPI;
 
 import java.awt.Robot;
 import java.util.HashSet;
