@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 @UtilityClass
-public class Util {
+public class BotUtil {
     
     public static boolean sleep(long ms) {
         try {
@@ -31,7 +31,6 @@ public class Util {
         try {
             return new BufferedWriter(new FileWriter(new File(workingDir, file), true));
         } catch (IOException ex) {
-            Console.log("&cНе удалось открыть поток записи &e" + file + "\n&e");
             throw new RuntimeException(ex);
         }
         
@@ -45,7 +44,7 @@ public class Util {
                 collection.add((char) i + reader.readLine());
             reader.close();
         } catch (IOException ex) {
-            Console.log("&fФайлик с приглашёнными юзерами не найден. Вы запускаете меня впервые?\n&r");
+            throw new RuntimeException(ex);
         }
         return collection;
     }

@@ -1,32 +1,51 @@
 package pro.delfik.vimebot;
 
+import lombok.RequiredArgsConstructor;
+
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 public class Console {
     
-    public static Console console;
-    
-    private final PrintStream stream = System.out;
+    private final PrintStream stream;
     private final boolean useColors;
-    private static final String[] encodings = {"UTF8", "CP1251", "CP866"};
-    private final String encoding1, encoding2;
+    private final String encodingFrom, encodingTo;
     
-    public Console(String encoding) {
-        this.encoding1 = encodings[encoding.charAt(0) - '1'];
-        this.encoding2 = encodings[encoding.charAt(1) - '1'];
-        this.useColors = encoding.charAt(2) == '1';
-        console = this;
+    @RequiredArgsConstructor
+    public enum Preset {
+        WINDOWS(false, "CP1251", "CP1251"),
+        WINDOWS_CMDCOLOR(true, "CP866", "CP1251");
+        
+        private final boolean useColors;
+        private final String encodingFrom;
+        private final String encodingTo;
+    
+        public static Preset get(String name) {
+            try {
+                return valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                System.out.println("Encoding '" + name + "' wasn't found, defaulting to WINDOWS.");
+                return WINDOWS;
+            }
+        }
+    
+        public Console create(PrintStream stream) {
+            return new Console(stream, useColors, encodingFrom, encodingTo);
+        }
+        
     }
     
-    public static void log(String s) {
-        console.print(s);
+    public Console(PrintStream stream, boolean useColors, String from, String to) {
+        this.stream = stream;
+        this.useColors = useColors;
+        this.encodingFrom = from;
+        this.encodingTo = to;
     }
     
     public void print(String string) {
         String s;
         try {
-            s = new String(string.getBytes(encoding1), encoding2);
+            s = new String(string.getBytes(encodingFrom), encodingTo);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

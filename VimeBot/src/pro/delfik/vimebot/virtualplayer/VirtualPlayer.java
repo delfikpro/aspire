@@ -1,9 +1,18 @@
-package pro.delfik.vimebot;
+package pro.delfik.vimebot.virtualplayer;
 
+import pro.delfik.vimebot.AutomaticUnit;
+import pro.delfik.vimebot.Bot;
+import pro.delfik.vimebot.BotUtil;
+import pro.delfik.vimebot.command.Command;
+import pro.delfik.vimebot.command.CommandPattern;
+import pro.delfik.vimebot.command.LogInterceptor;
+
+import java.awt.Robot;
 import java.io.File;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Ето добрый робот
@@ -11,7 +20,7 @@ import java.util.function.Consumer;
  * Он очень стараицо
  * Ещё он умеет читать чат и сообщать вам всю информацию оттуда
  */
-public abstract class VirtualPlayer extends Thread {
+public abstract class VirtualPlayer extends AutomaticUnit {
     
     /**
      * Перехватчик логов, нужен для чтения чата
@@ -37,23 +46,35 @@ public abstract class VirtualPlayer extends Thread {
     private volatile boolean lock;
     
     /**
-     * Инициализация бота с игнорированием логов.
+     * Ссылка на робота для удобства использования
      */
-    public VirtualPlayer() {
-        logInterceptor = null;
+    protected final Robot robot;
+    
+    /**
+     * Инициализация бота с игнорированием логов.
+     * @param bot Ссылка на бота
+     */
+    public VirtualPlayer(Bot bot) {
+        super(bot, "Virtual Player");
+        this.logInterceptor = null;
+        this.robot = bot.getRobot();
     }
     
     /**
      * Инициализация бота с чтением логов
      *
+     * @param bot Ссылка на бота
      * @param logFile        Файл, в который пишутся логи
+     * @param logFilter      Фильтр для логов
      * @param loggerCallback Слушатель сообщений (Может быть null)
      */
-    public VirtualPlayer(File logFile, Consumer<String> loggerCallback) {
+    public VirtualPlayer(Bot bot, File logFile, Function<String, String> logFilter, Consumer<String> loggerCallback) {
+        super(bot, "Virtual Player");
+        this.robot = bot.getRobot();
         if (logFile == null)
             logInterceptor = null;
         else
-            logInterceptor = new LogInterceptor(logFile, s -> handleLog(s, loggerCallback));
+            logInterceptor = new LogInterceptor(bot, logFile, logFilter, s -> handleLog(s, loggerCallback));
     }
     
     /**
@@ -82,8 +103,6 @@ public abstract class VirtualPlayer extends Thread {
     @Override
     public synchronized void start() {
         super.start();
-        if (logInterceptor != null)
-            logInterceptor.start();
     }
     
     /**
@@ -91,7 +110,7 @@ public abstract class VirtualPlayer extends Thread {
      */
     @Override
     public void run() {
-        while (Util.sleep(850)) {
+        while (BotUtil.sleep(850)) {
             if (lock && logInterceptor != null) continue;
             Command cmd = commands.poll();
             if (cmd == null) continue;

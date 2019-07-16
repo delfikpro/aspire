@@ -1,4 +1,4 @@
-package pro.delfik.vimebot;
+package pro.delfik.vimebot.command;
 
 import lombok.Getter;
 
