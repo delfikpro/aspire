@@ -13,7 +13,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class BotUtil {
@@ -38,7 +43,12 @@ public class BotUtil {
     
     public static Collection<String> readFile(File workingDir, String file, Collection<String> collection) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(workingDir, file)));
+            File f = new File(workingDir, file);
+            if (!f.exists()) {
+                f.createNewFile();
+                return new ArrayList<>();
+            }
+            BufferedReader reader = new BufferedReader(new FileReader(f));
             int i;
             while ((i = reader.read()) != -1)
                 collection.add((char) i + reader.readLine());
@@ -63,4 +73,6 @@ public class BotUtil {
             throw new RuntimeException(e);
         }
     }
+    
+    
 }
