@@ -47,9 +47,10 @@ public class Sholimp {
         config.read(console);
         this.warps = config.get("warps").split(", ");
         
-        this.bot = new Bot(console, "VimeWorld.ru", "Discover VimeWorld.ru", "Explore VimeWorld.ru");
+        this.bot = new Bot(console, "VimeWorld.ru", "Vime VimeWorld.ru", "Flair VimeWorld.ru", "Empire VimeWorld.ru",
+            "Hoden VimeWorld.ru", "Wurst VimeWorld.ru", "Discover VimeWorld.ru", "Explore VimeWorld.ru");
         
-        this.virtualPlayer = new MinecraftVirtualPlayer(bot, new File(workingDir, "output-client.log"), LogInterceptor.MINECRAFT_FILTER, this::handleLogLine);
+        this.virtualPlayer = new MinecraftVirtualPlayer(bot, new File(workingDir, "output-client.log"), LogInterceptor.MINECRAFT_164_FILTER, this::handleLogLine);
         AutoTasker autoTasker = new AutoTasker(bot, this::advertise, 180_000, advertising::get);
         
         BotUtil.readFile(workingDir, "invited.txt", invited);
@@ -96,7 +97,7 @@ public class Sholimp {
         String[] players = line.substring(9).split(", ");
         List<String> list = new ArrayList<>(Arrays.asList(players));
         for (String player : list) {
-            player = player.replace("[Отошел]", "");
+            player = player.replaceAll("\\[.*]", "");
             if (invited.contains(player))
                 continue;
             if (blacklist.contains(player))
