@@ -20,6 +20,7 @@ public class WinAPI {
     private final User32 U = loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
     
     public HWND window;
+    private final String[] windowNameVariants;
     private final UINT keydownOperation = new UINT(WinUser.WM_KEYDOWN);
     private final UINT keyreleaseOperation = new UINT(WinUser.WM_KEYUP);
     private final UINT keycharOperation = new UINT(WinUser.WM_CHAR);
@@ -28,14 +29,19 @@ public class WinAPI {
     private final LPARAM lparam2 = new LPARAM(0b110_0000_0_00101100_000000000000000_1);
     
     public WinAPI(String... windows) {
+        this.windowNameVariants = windows;
+        updateWindow();
+    }
+    
+    public void updateWindow() {
         HWND found = null;
-        for (String w : windows) {
+        for (String w : windowNameVariants) {
             found = U.FindWindow(null, w);
             if (found != null)
                 break;
         }
         if (found == null)
-            throw new IllegalArgumentException("Non of windows " + Arrays.toString(windows) + " were found.");
+            throw new IllegalArgumentException("Non of windows " + Arrays.toString(windowNameVariants) + " were found.");
         this.window = found;
     }
     
@@ -67,6 +73,7 @@ public class WinAPI {
     }
     
     public int[] getWindowRect() {
+        updateWindow();
         return getWindowRect(window);
     }
     
