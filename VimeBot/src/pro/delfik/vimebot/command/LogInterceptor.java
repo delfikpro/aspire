@@ -19,12 +19,23 @@ import java.util.function.Function;
 public class LogInterceptor extends AutomaticUnit implements AutoCloseable {
     
     /**
-     * Фильтр для логов Minecraft.
+     * Фильтр для логов Minecraft 1.6.4
      * Принимает только строчки с фразой [CLIENT] [INFO] [CHAT]
      * При этом обрезает эту фразу и всё, что идёт до неё.
      */
-    public static final Function<String, String> MINECRAFT_FILTER = s -> {
+    public static final Function<String, String> MINECRAFT_164_FILTER = s -> {
         String pattern = "[CLIENT] [INFO] [CHAT] ";
+        int i = s.indexOf(pattern);
+        if (i == -1) return null;
+        return s.substring(i + pattern.length());
+    };
+    /**
+     * Фильтр для логов Minecraft.
+     * Принимает только строчки с фразой [Client thread/INFO]: [CHAT]
+     * При этом обрезает эту фразу и всё, что идёт до неё.
+     */
+    public static final Function<String, String> MINECRAFT_188_FILTER = s -> {
+        String pattern = "[Client thread/INFO]: [CHAT] ";
         int i = s.indexOf(pattern);
         if (i == -1) return null;
         return s.substring(i + pattern.length());
